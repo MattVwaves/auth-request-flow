@@ -1,35 +1,37 @@
-const express = require('express')
-const jwt = require('jsonwebtoken')
-secret = process.env.JWT_SECRET
+const express = require("express");
+const jwt = require("jsonwebtoken");
+secret = process.env.JWT_SECRET;
 
-const router = express.Router()
+const router = express.Router();
 
 const mockUser = {
-  username: 'authguy',
-  password: 'mypassword',
+  username: "authguy",
+  password: "mypassword",
   profile: {
-    firstName: 'Chris',
-    lastName: 'Wolstenholme',
-    age: 43
+    firstName: "Chris",
+    lastName: "Wolstenholme",
+    age: 43,
+  },
+};
+
+router.post("/login", (req, res) => {
+  const { username, password } = req.body;
+  if (username === mockUser.username && password === mockUser.password) {
+    const token = jwt.sign(mockUser.username, secret);
+    res.json({ token });
   }
-}
+  res.status(400).json({ error: "invalid credentials" });
+});
 
-router.post('/login', (req, res) => {
-  const token = jwt.sign(mockUser.username, secret)
-  res.json({ token })
-})
-
-router.get('/profile', (req, res) => {
-  const header = req.headers['authorization']
-  // console.log(header)
-  const token = header.split(' ')[1]
-  console.log(token)
+router.get("/profile", (req, res) => {
+  const header = req.headers["authorization"];
+  const token = header.split(" ")[1];
   try {
-    const validToken = jwt.verify(token, secret)
-    res.status(200).json(mockUser.profile)
+    const validToken = jwt.verify(token, secret);
+    res.status(200).json(mockUser.profile);
   } catch (error) {
-    res.status(400).json({ Error: 'Invalid token detected!' })
+    res.status(400).json({ Error: "Invalid token detected!" });
   }
-})
+});
 
-module.exports = router
+module.exports = router;
