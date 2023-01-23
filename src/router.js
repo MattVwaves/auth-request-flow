@@ -27,7 +27,7 @@ router.get("/profile", (req, res) => {
   const header = req.headers["authorization"];
   const token = header.split(" ")[1];
   try {
-    const validToken = jwt.verify(token, secret);
+    jwt.verify(token, secret);
     res.status(200).json(mockUser.profile);
   } catch (error) {
     res.status(400).json({ Error: "Invalid token detected!" });
